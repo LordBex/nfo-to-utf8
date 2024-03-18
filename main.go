@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -15,6 +14,7 @@ import (
 var appExec = "NFO-to-UTF8"
 var appVersion string
 var fileName string
+var outFileName string
 var spaces = false
 var verbose = false
 var linebreaks = false
@@ -27,30 +27,49 @@ func init() {
 	flaggy.Bool(&spaces, "s", "spaces", "Convert spaces to non-breaking spaces")
 	flaggy.Bool(&linebreaks, "l", "linebreaks", "Convert line breaks to correct characters for the system (LF for Linux/Mac and CRLF for Windows)")
 	flaggy.Bool(&verbose, "v", "verbose", "Show verbose output")
+	flaggy.String(&outFileName, "o", "out", "Optional specifies the output file path after conversion")
 	if appVersion != "" {
 		flaggy.SetVersion(appVersion)
 	}
+
 	flaggy.Parse()
+
+	if outFileName == "" {
+		outFileName = fileName
+	}
 }
 
 func main() {
-	file, err := ioutil.ReadFile(fileName)
+	file, err := os.ReadFile(fileName)
 	if err != nil {
 		exit(err)
 	}
 	if encoding := detectEncoding(file); encoding == "CP437" {
 		utf8File := cp437toUTF8(file, spaces)
-		err = ioutil.WriteFile(fileName, []byte(utf8File), 0666)
+		err = os.WriteFile(outFileName, []byte(utf8File), 0666)
 		if err != nil {
 			exit(err)
 		} else {
 			if verbose {
 				fmt.Printf("File %s succesfully converted to UTF-8\n", fileName)
+
+				if outFileName != fileName {
+					fmt.Printf("File saved to %s\n", outFileName)
+				}
 			}
 		}
 	} else {
 		if verbose {
 			fmt.Printf("File %s is not CP437 encoded, exiting...\n", fileName)
+		}
+		if outFileName != fileName {
+			err := os.Rename(fileName, outFileName)
+			if err != nil {
+				if verbose {
+					fmt.Printf("Failing renaming File")
+				}
+				exit(err)
+			}
 		}
 		exit(nil)
 	}
