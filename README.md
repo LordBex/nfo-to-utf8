@@ -10,10 +10,11 @@ NFO-to-UTF8 checks the NFO file whether it is identified as being single byte en
 ## Bonus
 When adding the flag `-s` (or `--spaces`) the space characters are replaced with non-breaking space characters (U+00A0).
 When adding the flag `-l` (or `--linebreaks`) the line break characters are replaced with the correct characters for the system (LF for Linux/Mac and CRLF for Windows).
+When adding the option `-o` (or `--out`) a different output file path is specified. Additionally, files encoded in UTF-8 will be renamed.
 
 ## Usage:
 ```
-NFO-to-UTF8 NFO [-v] [-s] [-l]
+NFO-to-UTF8 NFO [-v] [-s] [-l] [-o PATH]
 ```
 #### Positional Variables:
 ```
@@ -26,4 +27,5 @@ NFO   Path to the NFO file to be converted (Required)
 -s --spaces       Convert spaces to non-breaking spaces
 -l --linebreaks   Convert line breaks to correct characters for the system (LF for Linux/Mac and CRLF for Windows)
 -v --verbose      Show verbose output
+-o --out          Optional specifies the output file path after conversion
 ```
