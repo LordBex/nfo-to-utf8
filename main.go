@@ -62,7 +62,7 @@ func main() {
 		if verbose {
 			fmt.Printf("File %s is not CP437 encoded, exiting...\n", fileName)
 		}
-		if outFileName != fileName {
+		if outFileName != fileName && encoding == "UTF-8" {
 			err := os.Rename(fileName, outFileName)
 			if err != nil {
 				if verbose {
@@ -93,7 +93,7 @@ func detectEncoding(data []byte) string {
 			fmt.Printf("Detected encoding: %s\n", result.Charset)
 		}
 	}
-	if strings.Contains(result.Charset, "ISO-8859") || strings.Contains(result.Charset, "windows") || strings.Contains(result.Charset, "KOI8") || strings.Contains(result.Charset, "IBM") || result.Charset == "Shift_JIS" {
+	if strings.Contains(result.Charset, "GB-18030") || strings.Contains(result.Charset, "ISO-8859") || strings.Contains(result.Charset, "windows") || strings.Contains(result.Charset, "KOI8") || strings.Contains(result.Charset, "IBM") || result.Charset == "Shift_JIS" {
 		if verbose {
 			fmt.Println("Assuming it is CP437")
 		}
